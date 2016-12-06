@@ -16,63 +16,107 @@ var state = {
 	answersArray: [2, 4, 3, 1, 3,],
 	answerCorrect: 'Correct answer!',
 	answerIncorrect: 'Oops. That is not the correct answer',
-	questionNumber: 0
+	questionNumber: 0,
+	userAnswers: [],
+	correctAnswerCounter: 0
 };
 
 // State modification functions
-function modifyState (value) {
-    value++;
-    return value;
+function questionCounter (state) {
+    state.questionNumber++;
+    return state;
 };   
 
+function addCorrect (state) {
+	state.correctAnswerCounter++;
+}
+
+
 //function to render question and choices
-function listQuestion(number) {
-	$('.js-question-class').html('<h3>' + state.questionsArray[number] + '</h3>');
+function listQuestion(state) {
+	$('.js-question-class').html('<h3>' + state.questionsArray[state.questionNumber] + '</h3>');
 			
-		for (var k=0; k<state.choicesArray[number].length; k++) {
+		for (var k=0; k<state.choicesArray[state.questionNumber].length; k++) {
 			$('.js-choices-class').append('<input type="radio" name="choice" value="' + (k + 1) + 
-				'" id="choice"><label for="choice">' + state.choicesArray[number][k] + '</label><br/>')
+				'" id="choice" required><label for="choice">' + state.choicesArray[state.questionNumber][k] + '</label><br/>')
 		}
-		$('.js-submit-class').html('<form><button type="submit">Submit</button></form>');
-	$('.js-question-count-class').html('<p>Question: ' + (number + 1) + ' of 5</p>');	
+		$('.js-choices-class').append('<button type="submit">Submit</button>');	
 //	return radio input value
 }
+
+function hideStartButton (state) {
+	$('.js-start-button-class').addClass('hidden');
+}
+
+function createRestartButton () {
+	$('.js-restart-class').html('<button type="submit">Try Again</button>')
+}
+
+function clearChoices () {
+	$('.js-choices-class').html('');	
+}
+
+function addUserAnswers (value) {
+	state.userAnswers.push(value);
+	console.log(state.userAnswers);
+}
+
+
+function displayQuestionCount (state) {
+	if (state.questionNumber < state.questionsArray.length) {
+		$('.js-question-count-class').html('<p>Question: ' + (state.questionNumber + 1) + ' of 5</p>');		
+	} else {
+		$('.js-question-count-class').html('<p>Question: ' + (state.questionNumber) + ' of 5</p>');			
+	}
+}
+
+
+function updateScore (state) {
+	$('.js-score-class').html('<p>Score: ' + state.correctAnswerCounter + ' out of ' + state.questionNumber + '</p>');
+}
+//Evaluation function
+
+function evaluateAnswer (state) {
+	if (state.userAnswers[state.questionNumber - 1] == state.answersArray[state.questionNumber - 1]) {
+		addCorrect(state);
+		alert('Correct!');
+	} else {
+		alert('Oops! Wrong answer.')
+	}
+}
+
+
 // Event Listener start quiz
 $('.js-start-button-class').on('click', 'button', function(event) {
     event.preventDefault();
-    listQuestion(state.questionNumber);
-    $('.js-start-button-class').addClass('hidden');
+    listQuestion(state);
+    hideStartButton();
+    displayQuestionCount(state);
     //remove top line to separate render
 });
 
 
-$('.js-submit-class').submit(function(event) {
+$('.js-choices-class').submit(function(event) {
 	event.preventDefault();
 	if ((state.questionNumber + 1) < state.questionsArray.length) {
-		$('.js-choices-class').html('');
-		modifyState (state.questionNumber);
-		listQuestion(state.questionNumber);
+		addUserAnswers($("input[name=choice]:checked").val());
+		questionCounter(state);
+		evaluateAnswer(state);
+		clearChoices();		
+		listQuestion(state);
+		displayQuestionCount(state);
+		updateScore(state);
 	} else {
-	//	Hide divs no longer relevant. New screen that gives score and "play again button"	
+		addUserAnswers($("input[name=choice]:checked").val());	
+		questionCounter(state);
+		evaluateAnswer(state);
+		clearChoices();
+		displayQuestionCount(state);
+		updateScore(state);
+		createRestartButton();
 	}
 });
 
-
-/*
-var state = {
-	activeDiv: '#div2'
-	};
-
-function setActiveDiv(state, div) {
-	state.activeDiv = div;
-}
-
-setActiveDiv('#div1');
-function renderActiveDiv(state) {
-	$('.page.divs').addClass('hidden');
-	$(state.activeDiv).removeClass('hidden');
-}
-*/
-
-
-
+$('.js-restart-class').on('click', 'button', function(event) {
+ 	location.reload();
+ });

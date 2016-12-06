@@ -59,11 +59,15 @@ function clearChoices () {
 	$('.js-choices-class').html('');	
 }
 
+function clearQuestion () {
+	$('.js-question-class').html('');	
+}
+
 function displayQuestionCount (state) {
 	if (state.questionNumber < state.questionsArray.length) {
 		$('.js-question-count-class').html('<p>Question: ' + (state.questionNumber + 1) + ' of 5</p>');		
 	} else {
-		$('.js-question-count-class').html('<p>Question: ' + (state.questionNumber) + ' of 5</p>');			
+		$('.js-question-count-class').html(' ');			
 	}
 }
 
@@ -108,6 +112,7 @@ $('.js-choices-class').submit(function(event) {
 		questionCounter(state);
 		evaluateAnswer(state);
 		clearChoices();
+		clearQuestion();
 		displayQuestionCount(state);
 		updateScore(state);
 		createRestartButton();

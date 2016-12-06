@@ -21,7 +21,7 @@ var state = {
 	correctAnswerCounter: 0
 };
 
-// State modification functions
+// **State modification functions**
 function questionCounter (state) {
     state.questionNumber++;
     return state;
@@ -31,8 +31,12 @@ function addCorrect (state) {
 	state.correctAnswerCounter++;
 }
 
+function addUserAnswers (value) {
+	state.userAnswers.push(value);
+}
 
-//function to render question and choices
+
+// **Render Functions**
 function listQuestion(state) {
 	$('.js-question-class').html('<h3>' + state.questionsArray[state.questionNumber] + '</h3>');
 			
@@ -41,7 +45,6 @@ function listQuestion(state) {
 				'" id="choice" required><label for="choice">' + state.choicesArray[state.questionNumber][k] + '</label><br/>')
 		}
 		$('.js-choices-class').append('<button type="submit">Submit</button>');	
-//	return radio input value
 }
 
 function hideStartButton (state) {
@@ -56,12 +59,6 @@ function clearChoices () {
 	$('.js-choices-class').html('');	
 }
 
-function addUserAnswers (value) {
-	state.userAnswers.push(value);
-	console.log(state.userAnswers);
-}
-
-
 function displayQuestionCount (state) {
 	if (state.questionNumber < state.questionsArray.length) {
 		$('.js-question-count-class').html('<p>Question: ' + (state.questionNumber + 1) + ' of 5</p>');		
@@ -70,12 +67,11 @@ function displayQuestionCount (state) {
 	}
 }
 
-
 function updateScore (state) {
 	$('.js-score-class').html('<p>Score: ' + state.correctAnswerCounter + ' out of ' + state.questionNumber + '</p>');
 }
-//Evaluation function
 
+//Evaluation function
 function evaluateAnswer (state) {
 	if (state.userAnswers[state.questionNumber - 1] == state.answersArray[state.questionNumber - 1]) {
 		addCorrect(state);
@@ -86,7 +82,8 @@ function evaluateAnswer (state) {
 }
 
 
-// Event Listener start quiz
+// ***EVENT LISTENERS***
+// Event Listener to start quiz
 $('.js-start-button-class').on('click', 'button', function(event) {
     event.preventDefault();
     listQuestion(state);
@@ -95,7 +92,7 @@ $('.js-start-button-class').on('click', 'button', function(event) {
     //remove top line to separate render
 });
 
-
+// Event listener to submit answer
 $('.js-choices-class').submit(function(event) {
 	event.preventDefault();
 	if ((state.questionNumber + 1) < state.questionsArray.length) {
@@ -117,6 +114,7 @@ $('.js-choices-class').submit(function(event) {
 	}
 });
 
+// Event listener to restart quiz
 $('.js-restart-class').on('click', 'button', function(event) {
  	location.reload();
  });

@@ -23,7 +23,7 @@ var state = {
 function modifyState (value) {
     value++;
     return value;
-};
+};   
 
 //function to render question and choices
 function listQuestion(number) {
@@ -34,8 +34,7 @@ function listQuestion(number) {
 				'" id="choice"><label for="choice">' + state.choicesArray[number][k] + '</label><br/>')
 		}
 		$('.js-submit-class').html('<form><button type="submit">Submit</button></form>');
-	$('.js-question-count-class').html('<p>Question: ' + (number + 1) + ' of 5</p>');
-	
+	$('.js-question-count-class').html('<p>Question: ' + (number + 1) + ' of 5</p>');	
 //	return radio input value
 }
 // Event Listener start quiz
@@ -43,6 +42,7 @@ $('.js-start-button-class').on('click', 'button', function(event) {
     event.preventDefault();
     listQuestion(state.questionNumber);
     $('.js-start-button-class').addClass('hidden');
+    //remove top line to separate render
 });
 
 
@@ -50,7 +50,7 @@ $('.js-submit-class').submit(function(event) {
 	event.preventDefault();
 	if ((state.questionNumber + 1) < state.questionsArray.length) {
 		$('.js-choices-class').html('');
-		state.questionNumber++;
+		modifyState (state.questionNumber);
 		listQuestion(state.questionNumber);
 	} else {
 	//	Hide divs no longer relevant. New screen that gives score and "play again button"	
@@ -58,6 +58,21 @@ $('.js-submit-class').submit(function(event) {
 });
 
 
+/*
+var state = {
+	activeDiv: '#div2'
+	};
+
+function setActiveDiv(state, div) {
+	state.activeDiv = div;
+}
+
+setActiveDiv('#div1');
+function renderActiveDiv(state) {
+	$('.page.divs').addClass('hidden');
+	$(state.activeDiv).removeClass('hidden');
+}
+*/
 
 
 
